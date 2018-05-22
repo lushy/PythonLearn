@@ -34,7 +34,7 @@ else:
 print('分页条数共计:%d' % split_size)
 
 try:
-    max_repeat_count = 50  # 最大重复重复记录，处理因为部分公告排序前面导致数据库直接存在记录退出问题
+    max_repeat_count = 15  # 最大重复重复记录，处理因为部分公告排序前面导致数据库直接存在记录退出问题
     insert_count = 0  # 本次记录插入数据库条数
     
     print('连接到mysql服务器...')
@@ -47,7 +47,7 @@ try:
     # 逐页请求数据
     for i in range(1, split_size):
         url = 'http://www.bidding.csg.cn/dbsearch.jspx?pageNo=' + str(i) + '&q=&org=&types='
-        print('开始提取第' + str(i) + '页')
+        print('开始提取第%d页，已插入%d条记录' %(i, insert_count))
         request = urllib.request.Request(url, headers=hdrs)
         # 利用urlopen获取页面代码
         response = urllib.request.urlopen(request)
@@ -74,7 +74,7 @@ try:
             row_count = cursor.fetchone()
             if row_count[0] == 0 :
                     # 如果数据库未存储，插入公告记录到数据库 
-                    insert_cggg = ('INSERT INTO CGGG(Ggmc,Ggurl,Ggrq)' 'VALUES(%s,%s,%s)')
+                    insert_cggg = ('INSERT INTO CGGG(Id,Ggmc,Ggurl,Ggrq)' 'VALUES(UUID(),%s,%s,%s)')
                     data_cggg = (ggmc, 'http://www.bidding.csg.cn' + ggurl, ggrq)
 
                     # 执行sql语句
@@ -83,7 +83,6 @@ try:
                     db.commit()
                     # 计数器加一
                     insert_count += 1
-                    print('插入成功!')
             else:
                     # 如果最大重复数量大于0，则继续遍历下一条
                     if max_repeat_count > 0 :
