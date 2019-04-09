@@ -14,7 +14,7 @@ import pymysql
 # 代理头部信息
 hdrs = {'User-Agent':'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)'}
 # 默认第一页
-url = 'http://www.bidding.csg.cn/dbsearch.jspx?pageNo=1&q=&org=&types='
+url = 'http://www.sunbidding.com.cn/dbsearch.jspx?pageNo=1&q=&org=&types='
 
 request = urllib.request.Request(url, headers=hdrs)
 # 利用urlopen获取页面代码
@@ -46,7 +46,7 @@ try:
 
     # 逐页请求数据
     for i in range(1, split_size):
-        url = 'http://www.bidding.csg.cn/dbsearch.jspx?pageNo=' + str(i) + '&q=&org=&types='
+        url = 'http://www.sunbidding.com.cn/dbsearch.jspx?pageNo=' + str(i) + '&q=&org=&types='
         print('开始提取第%d页，已插入%d条记录' %(i, insert_count))
         request = urllib.request.Request(url, headers=hdrs)
         # 利用urlopen获取页面代码
@@ -69,13 +69,13 @@ try:
             
             # 检索数据库是否已存储记录
             query_cggg = ('select count(*) from Cggg where Ggurl = %s') 
-            query_data_cggg = ('http://www.bidding.csg.cn' + ggurl)
+            query_data_cggg = ('http://www.sunbidding.com.cn' + ggurl)
             cursor.execute(query_cggg, query_data_cggg)
             row_count = cursor.fetchone()
             if row_count[0] == 0 :
                     # 如果数据库未存储，插入公告记录到数据库 
                     insert_cggg = ('INSERT INTO CGGG(Id,Ggmc,Ggurl,Ggrq)' 'VALUES(UUID(),%s,%s,%s)')
-                    data_cggg = (ggmc, 'http://www.bidding.csg.cn' + ggurl, ggrq)
+                    data_cggg = (ggmc, 'http://www.sunbidding.com.cn' + ggurl, ggrq)
 
                     # 执行sql语句
                     cursor.execute(insert_cggg, data_cggg)
